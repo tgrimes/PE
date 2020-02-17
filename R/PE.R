@@ -65,9 +65,9 @@ E <- function(..., weights = "N", keep_df = FALSE) {
   return(df)
 }
 
-#' Expectation
+#' Probability
 #'
-#' @param ... What to compute the expectation of
+#' @param ... What to compute the probability of
 #' @param weights The name of the column containing sample weights. Set to NULL
 #' for no weighting.
 #' @param keep_df If TRUE, the resulting data frame is returned (which will

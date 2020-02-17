@@ -2,12 +2,12 @@
 % Please edit documentation in R/PE.R
 \name{P}
 \alias{P}
-\title{Expectation}
+\title{Probability}
 \usage{
 P(..., weights = "N", keep_df = FALSE)
 }
 \arguments{
-\item{...}{What to compute the expectation of}
+\item{...}{What to compute the probability of}
 
 \item{weights}{The name of the column containing sample weights. Set to NULL
 for no weighting.}
@@ -19,7 +19,7 @@ contain additional columns for conditioned variables).}
 A numeric vector containing the computed expectation.
 }
 \description{
-Expectation
+Probability
 }
 \note{
 Assumes a data frame named "dat" is defined in the global environment.
