@@ -34,11 +34,12 @@ E <- function(..., weights = "N", keep_df = FALSE) {
   }
 
   df <- dat
-  df <- rename(df, outcome_var__ = outcome_var)
-  if(is.null(weights)) {
-    df <- mutate(df, def_weights__ = 1)
+  df <- dplyr::rename(df, outcome_var__ = outcome_var)
+  # Note: if weights is not in the data frame, then ignore it.
+  if(is.null(weights) || !(weights %in% colnames(df))) {
+    df <- dplyr::mutate(df, def_weights__ = 1)
   } else {
-    df <- rename(df, def_weights__ = weights)
+    df <- dplyr::rename(df, def_weights__ = weights)
   }
 
   # First subset data onto conditional values:
@@ -48,15 +49,15 @@ E <- function(..., weights = "N", keep_df = FALSE) {
   if(length(args_cond) > 0) {
     for(i in 1:length(args_cond)) {
       cond <- as.character(as.expression(args_cond[[i]]))
-      df <- filter(df, eval(rlang::parse_expr(cond)))
+      df <- dplyr::filter(df, eval(rlang::parse_expr(cond)))
     }
   }
 
   df <- df %>%
-    group_by_(.dots = args_group) %>%
-    mutate(denom = sum(def_weights__),
-           num = sum(def_weights__ * outcome_var__)) %>%
-    summarize(E = (num / denom)[1])
+    dplyr::group_by_(.dots = args_group) %>%
+    dplyr::mutate(denom = sum(def_weights__),
+                  num = sum(def_weights__ * outcome_var__)) %>%
+    dplyr::summarize(E = (num / denom)[1])
 
   if(!keep_df) {
     df <- as.numeric(df$E)
@@ -108,10 +109,11 @@ P <- function(..., weights = "N", keep_df = FALSE) {
     outcome_var <- outcome
   }
 
-  if(is.null(weights)) {
-    df <- mutate(df, def_weights__ = 1)
+  # Note: if weights is not in the data frame, then ignore it.
+  if(is.null(weights) || !(weights %in% colnames(df))) {
+    df <- dplyr::mutate(df, def_weights__ = 1)
   } else {
-    df <- rename(df, def_weights__ = weights)
+    df <- dplyr::rename(df, def_weights__ = weights)
   }
 
   # First subset data onto conditional values:
@@ -122,19 +124,19 @@ P <- function(..., weights = "N", keep_df = FALSE) {
   if(length(args_cond) > 0) {
     for(i in 1:length(args_cond)) {
       cond <- as.character(as.expression(args_cond[[i]]))
-      df <- filter(df, eval(rlang::parse_expr(cond)))
+      df <- dplyr::filter(df, eval(rlang::parse_expr(cond)))
     }
   }
 
   df <- df %>%
-    group_by_(.dots = args_group) %>%
-    mutate(denom = sum(def_weights__)) %>%
-    group_by_(.dots = args_group_w_outcome) %>%
-    mutate(num = sum(def_weights__)) %>%
-    summarize(P = (num / denom)[1])
+    dplyr::group_by_(.dots = args_group) %>%
+    dplyr::mutate(denom = sum(def_weights__)) %>%
+    dplyr::group_by_(.dots = args_group_w_outcome) %>%
+    dplyr::mutate(num = sum(def_weights__)) %>%
+    dplyr::summarize(P = (num / denom)[1])
 
   if(grepl("=", outcome)) {
-    df <- filter(df, eval(rlang::parse_expr(outcome)))
+    df <- dplyr::filter(df, eval(rlang::parse_expr(outcome)))
   }
 
   if(!keep_df) {
